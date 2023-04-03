@@ -1,0 +1,40 @@
+  1  sudo mkdir /etc/prometheus
+    2  sudo mkdir /var/lib/prometheus
+    3  sudo chown prometheus:prometheus /etc/prometheus
+    4  sudo useradd --no-create-home --shell /bin/false prometheus
+    5  sudo useradd --no-create-home --shell /bin/false node_exporter
+    6  sudo chown prometheus:prometheus /etc/prometheus
+    7  sudo chown prometheus:prometheus /var/lib/prometheus
+    8  cd ~
+    9  curl -LO https://github.com/prometheus/prometheus/releases/download/v2.0.0/prometheus-2.0.0.linux-amd64.tar.gz
+   10  sha256sum prometheus-2.0.0.linux-amd64.tar.gz
+   11  tar xvf prometheus-2.0.0.linux-amd64.tar.gz
+   12  sudo cp prometheus-2.0.0.linux-amd64/prometheus /usr/local/bin/
+   13  sudo cp prometheus-2.0.0.linux-amd64/promtool /usr/local/bin/
+   14  sudo chown prometheus:prometheus /usr/local/bin/prometheus
+   15  sudo chown prometheus:prometheus /usr/local/bin/promtool
+   16  sudo cp -r prometheus-2.0.0.linux-amd64/consoles /etc/prometheus
+   17  sudo cp -r prometheus-2.0.0.linux-amd64/console_libraries /etc/prometheus
+   18  sudo chown -R prometheus:prometheus /etc/prometheus/consoles
+   19  sudo chown -R prometheus:prometheus /etc/prometheus/console_libraries
+   20  rm -rf prometheus-2.0.0.linux-amd64.tar.gz prometheus-2.0.0.linux-amd64
+   21  sudo nano /etc/prometheus/prometheus.yml
+   22  sudo chown prometheus:prometheus /etc/prometheus/prometheus.yml
+   23  sudo -u prometheus /usr/local/bin/prometheus \
+   24  sudo nano /etc/systemd/system/prometheus.service
+   25  sudo systemctl daemon-reload
+   26  sudo systemctl start prometheus
+   27  sudo systemctl status prometheus
+   28  mkdir grafana
+   29  cd ..
+   30  cd
+   31  cd grafana
+   32  history
+   33  cd grafana
+   34  wget -q -O - https://packages.grafana.com/gpg.key | gpg --dearmor | sudo tee /usr/share/keyrings/grafana.gpg > /dev/null
+   35  echo "deb [signed-by=/usr/share/keyrings/grafana.gpg] https://packages.grafana.com/oss/deb stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
+   36  sudo apt update
+   37  sudo apt install grafana
+   38  sudo systemctl start grafana-server
+   39  sudo systemctl status grafana-server
+   40  sudo systemctl enable grafana-server
