@@ -1,40 +1,105 @@
-  1  sudo mkdir /etc/prometheus
-    2  sudo mkdir /var/lib/prometheus
-    3
-    4  sudo useradd --no-create-home --shell /bin/false prometheus
-    5  sudo useradd --no-create-home --shell /bin/false node_exporter
-    6  sudo chown prometheus:prometheus /etc/prometheus
-    7  sudo chown prometheus:prometheus /var/lib/prometheus
-    8  cd ~
-    9  curl -LO https://github.com/prometheus/prometheus/releases/download/v2.0.0/prometheus-2.0.0.linux-amd64.tar.gz
-   10  sha256sum prometheus-2.0.0.linux-amd64.tar.gz
-   11  tar xvf prometheus-2.0.0.linux-amd64.tar.gz
-   12  sudo cp prometheus-2.0.0.linux-amd64/prometheus /usr/local/bin/
-   13  sudo cp prometheus-2.0.0.linux-amd64/promtool /usr/local/bin/
-   14  sudo chown prometheus:prometheus /usr/local/bin/prometheus
-   15  sudo chown prometheus:prometheus /usr/local/bin/promtool
-   16  sudo cp -r prometheus-2.0.0.linux-amd64/consoles /etc/prometheus
-   17  sudo cp -r prometheus-2.0.0.linux-amd64/console_libraries /etc/prometheus
-   18  sudo chown -R prometheus:prometheus /etc/prometheus/consoles
-   19  sudo chown -R prometheus:prometheus /etc/prometheus/console_libraries
-   20  rm -rf prometheus-2.0.0.linux-amd64.tar.gz prometheus-2.0.0.linux-amd64
-   21  sudo nano /etc/prometheus/prometheus.yml
-   22  sudo chown prometheus:prometheus /etc/prometheus/prometheus.yml
-   23  sudo -u prometheus /usr/local/bin/prometheus \
-   24  sudo nano /etc/systemd/system/prometheus.service
-   25  sudo systemctl daemon-reload
-   26  sudo systemctl start prometheus
-   27  sudo systemctl status prometheus
-   28  mkdir grafana
-   29  cd ..
-   30  cd
-   31  cd grafana
-   32  history
-   33  cd grafana
-   34  wget -q -O - https://packages.grafana.com/gpg.key | gpg --dearmor | sudo tee /usr/share/keyrings/grafana.gpg > /dev/null
-   35  echo "deb [signed-by=/usr/share/keyrings/grafana.gpg] https://packages.grafana.com/oss/deb stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
-   36  sudo apt update
-   37  sudo apt install grafana
-   38  sudo systemctl start grafana-server
-   39  sudo systemctl status grafana-server
-   40  sudo systemctl enable grafana-server
+Installation of prometheus
+
+   1  sudo apt-get update
+   2  mkdir prometheus
+   3  cd prometheus/
+   4  wget https://github.com/prometheus/prometheus/releases/download/v2.43.0/prometheus-2.43.0.linux-amd64.tar.gz
+   5  tar -xvf prometheus-2.43.0.linux-amd64.tar.gz 
+   6  ls
+   7  ls -lrt
+   8  cd prometheus-2.43.0.linux-amd64/
+   9  ls
+  10  cat prometheus
+  11  cat prometheus.yml
+  12  vim prometheus.yml
+  13  touch exporter-config.yml
+  14  ls
+  15  ./prometheus
+  16  vim prometheus.yml
+  17  ./prometheus
+  18  vim exporter-config.yml 
+  19  ./prometheus
+
+Installation of Node-exporter
+
+  1 mkdir node_exporter
+  2 cd node_exporter/
+  3 wget https://github.com/prometheus/node_exporter/releases/download/v1.5.0/node_exporter-1.5.0.linux-amd64.tar.gz
+  4 tar -xvf node_exporter-1.5.0.linux-amd64.tar.gz
+  5 ls -lrt
+  6 cd node_exporter-1.5.0.linux-amd64/
+  7 ./node_exporter
+
+Installation of Grafana
+
+    1  sudo apt-get install -y apt-transport-https
+    2  sudo apt-get install -y software-properties-common wget
+    3  wget -q -O - https://packages.grafana.com/gpg.key | sudo apt-key add -
+    4  echo "deb https://packages.grafana.com/enterprise/deb stable main" | sudo tee -a /etc/apt/sources.list.d/grafana.list
+    5  sudo apt-get update
+    6  sudo apt-get install grafana-enterprise
+    7  sudo systemctl daemon-reload
+    8  sudo systemctl start grafana-server
+    9  sudo systemctl status grafana-server
+   10  sudo systemctl enable grafana-server.service
+
+Now change the prometheus.yml file $ exporter-config.yml
+
+prometheus.yml
+===
+# my global config
+global:
+  scrape_interval: 15s # Set the scrape interval to every 15 seconds. Default is every 1 minute.
+  evaluation_interval: 15s # Evaluate rules every 15 seconds. The default is every 1 minute.
+  # scrape_timeout is set to the global default (10s).
+
+# Alertmanager configuration
+alerting:
+  alertmanagers:
+    - static_configs:
+        - targets:
+          # - alertmanager:9093
+
+# Load rules once and periodically evaluate them according to the global 'evaluation_interval'.
+rule_files:
+  # - "first_rules.yml"
+  # - "second_rules.yml"
+
+# A scrape configuration containing exactly one endpoint to scrape:
+# Here it's Prometheus itself.
+scrape_configs:
+  # The job name is added as a label `job=<job_name>` to any timeseries scraped from this config.
+  - job_name: "prometheus"
+
+    # metrics_path defaults to '/metrics'
+    # scheme defaults to 'http'.
+
+    static_configs:
+      - targets: ["localhost:9090","54.197.198.26:9100"]
+
+
+
+2. exporter-config.yml
+====
+
+global:
+   scrape_interval: 15s
+
+scrape_configs:
+   - job_name: node
+     static_configs:
+        - targets: ['localhost:9100','54.197.198.26:9100'] 
+
+
+
+Server 2-
+
+Installation of node_exporter
+
+  1 mkdir node_exporter
+  2 cd node_exporter/
+  3 wget https://github.com/prometheus/node_exporter/releases/download/v1.5.0/node_exporter-1.5.0.linux-amd64.tar.gz
+  4 tar -xvf node_exporter-1.5.0.linux-amd64.tar.gz
+  5 ls -lrt
+  6 cd node_exporter-1.5.0.linux-amd64/
+  7 ./node_exporter
