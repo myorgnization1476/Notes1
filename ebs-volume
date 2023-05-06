@@ -1,0 +1,15 @@
+df -h
+sudo lsblk
+sudo growpart /dev/xvda 1
+sudo xfs_growfs /
+
+command for to add 2 volume
+
+sudo file -s /dev/xvdf 
+df -kh
+sudo mkfs -t ext4 /dev/xvdf
+sudo mkdir /newvolume
+sudo mount /dev/xvdf /newvolume/
+cd /newvolume
+df -h
+
