@@ -1,0 +1,12 @@
+launch instance must in inbound all traffic rule allow.
+install pritunl
+> https://docs.pritunl.com/docs/installation#other-providers-ubuntu-2204
+then configuration
+
+launch another server in that add bastion private ip
+
+
+install pritunl client
+> https://client.pritunl.com/
+
+
