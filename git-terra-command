@@ -1,0 +1,19 @@
+git commands
+> git clone
+> git status
+> git add 
+> git commit -m "msg"
+> git status
+> git push
+> git pull
+
+
+Terraform commands
+> terraform init
+> terraaform fmt
+> terraform plan
+> terraform validate
+> terraform apply --auto-approve
+> terraform destroy --auto-approve
+
+
