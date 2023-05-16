@@ -1,0 +1,21 @@
+login the server
+> sudo adduser swati 
+> sudo adduser swati sudo
+> sudo su -
+> su - swati
+> mkdir .ssh/
+> cd .ssh/
+> vi authorized_keys
+>ls
+> exit
+
+
+change the hostename
+> sudo vi /etc/hostname
+> sudo reboot
+
+
+for accessing the server
+> ssh -A username@bastionIP
+> ssh @serverIP
+
