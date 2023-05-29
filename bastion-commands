@@ -14,6 +14,10 @@ change the hostename
 > sudo vi /etc/hostname
 > sudo reboot
 
+file permisssion
+chmod 700 .ssh
+chmod 600 .ssh/authorized_keys
+
 
 for accessing the server
 > ssh -A username@bastionIP
