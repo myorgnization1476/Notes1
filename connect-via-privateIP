@@ -1,0 +1,19 @@
+To access SSH into es or kafka VM under same subnet as kubernetes cluster
+
+1. export the kubeconfig file of required eks env
+
+export KUBECONFIG=~/z/poc.yaml //For PoC env
+
+2. Run a kubernetes pod in the env with a base image
+
+kubectl run --rm -ti alpine --image alpine sh -n poc //Alpine image used here
+
+3. If SSH tool doesn't exist, add using below command
+apk add openssh // package install command for Alpine
+
+4. Create a private key pem file inside the container using cat or vim, change the permission to 400
+
+5. ssh using es ip from the aws console and set ubuntu as user
+
+ssh -i admin-key-pair.pem ubuntu@10.0.1.157 // For current PoC environment.
+
