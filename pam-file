@@ -1,3 +1,9 @@
+google authenticator link
+==
+>https://ubuntu.com/tutorials/configure-ssh-2fa#2-installing-and-configuring-required-packages
+
+
+
 # PAM configuration for the Secure Shell service
 #auth required pam_google_authenticator.so
 
