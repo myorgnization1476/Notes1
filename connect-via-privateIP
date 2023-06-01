@@ -1,5 +1,5 @@
 To access SSH into es or kafka VM under same subnet as kubernetes cluster
-
+###### aws eks --region ap-south-1 update-kubeconfig --name poc-cluster   ###########
 1. export the kubeconfig file of required eks env
 
 export KUBECONFIG=~/z/poc.yaml //For PoC env
