@@ -97,7 +97,5 @@ cat > ~/mycron << EOF
 EOF
 crontab ~/mycron
 
-export LOGFILE=`ls /var/log/bastion/[audit key]*.data | cut -d. -f1`
-scriptreplay --timing=$LOGFILE.time $LOGFILE.data
 
 aws s3 sync /var/log/bastion s3://YOUR_BUCKET/foldername
