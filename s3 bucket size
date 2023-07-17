@@ -1,0 +1,34 @@
+#!/bin/bash
+
+ 
+
+# Set the AWS profile to use
+PROFILE=default
+
+ 
+
+# Get a list of all the buckets
+BUCKETS=$(aws --profile ${PROFILE} s3 ls | awk '{print $3}')
+ 
+
+# Initialize the total size
+TOTAL_SIZE=0
+
+ 
+
+# Loop through the buckets and calculate their size
+for BUCKET in ${BUCKETS}; do
+  SIZE=$(aws --profile ${PROFILE} s3 ls s3://${BUCKET} --recursive --human-readable --summarize | awk '/Total Size:/ {print $3}')
+  SIZE=${SIZE//[^[:digit:].]/} # Remove non-numeric characters except the dot
+  TOTAL_SIZE=$(bc <<< "$TOTAL_SIZE + $SIZE")
+done
+
+ 
+
+# Convert the total size to gigabytes
+TOTAL_SIZE_GB=$(bc <<< "scale=2; $TOTAL_SIZE / 1073741824")
+
+ 
+
+# Print the total size in GB
+echo "The total size of all the S3 buckets is ${TOTAL_SIZE_GB} GB."
