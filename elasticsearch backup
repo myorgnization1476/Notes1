@@ -1,0 +1,36 @@
+#!/bin/bash
+
+
+# Rename the existing ES snapshot on AWS Bucket
+aws s3 --recursive mv s3://hcx-elasticsearch-snapshots-poc/elasticsearch-snapshots s3://hcx-elasticsearch-snapshots-poc/elasticsearch-snapshots_bkp
+
+
+# Delete and Re-create the snapshot repo
+
+SNAPSHOT_DATE="$(date +%Y-%m-%d-%s)"
+SNAPSHOT_NAME="elasticsearch_snapshot"
+SNAPSHOT_S3_BUCKET="hcx-elasticsearch-snapshots-poc"
+SNAPSHOT_BASE_PATH="elasticsearch-snapshots"
+
+# Delete S3 Repository
+curl -vvvv -X DELETE "http://localhost:9200/_snapshot/elasticsearch_snapshot"
+
+# Create S3 Repository
+curl -vvvv -X PUT -H 'Content-Type: application/json' "http://localhost:9200/_snapshot/elasticsearch_snapshot" \
+    -d '{ 
+        "type": "s3", 
+        "settings": { 
+            "bucket": "hcx-elasticsearch-snapshots-poc", 
+            "base_path": "elasticsearch-snapshots" 
+            }
+        }'
+
+
+# Create Backup
+curl -vvvv -X PUT -H 'Content-Type: application/json' "http://localhost:9200/_snapshot/elasticsearch_snapshot/elasticsearch-snapshots_${SNAPSHOT_DATE}"
+
+# Check Backup Status
+curl -vvvv -X GET "http://localhost:9200/_snapshot/elasticsearch_snapshot/elasticsearch-snapshots_${SNAPSHOT_DATE}"
+
+# Print all snapshots
+curl -vvvv -X GET "http://localhost:9200/_snapshot/elasticsearch_snapshot/_all"
