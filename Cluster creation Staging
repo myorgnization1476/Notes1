@@ -1,0 +1,46 @@
+Needs to be downloaded the tool
+==========================================
+1. kubectl                          --- https://github.com/weaveworks/eksctl/releases/tag/v0.72.0
+2. aws authentication               --- https://github.com/kubernetes-sigs/aws-iam-authenticator/releases
+3. aws cli                          --- configure the AWS credentials with user name
+4. Update the staging.yaml file     --- VPC and Subnets 
+    path --- https://github.com/Swasth-Digital-Health-Foundation/hcx-devops/blob/sprint-43/infrastructure/eks/eks_cluster_config.yaml
+
+5. Create cluster using below command ---
+     command--- eksctl create cluster -f eks_cluster_config.yaml --profile `aws-profile-name` 
+     #use profile with eks full access or create access ex. - git-deploy
+
+6. create .yaml file                 --- nano .yaml
+    add in that .yaml file --> optit@OPT-LT-226:/home/swati.n@optit.india$ cat .yaml 
+export KUBECONFIG="/home/swati.optit.india/authenticator.yaml"
+
+7. update the cluster file                
+    command --- aws eks update-kubeconfig --name hcx-staging-1-27 --profile git-deploy
+
+8. check k8s commands are working or not  ---
+   commands --- kubectl get nodes
+                kubectl get pods -A kube-system
+                kubectl get ns -A
+                kubectl logs -n kube-system cluster-autoscaler-76d66cddfb-559g7
+
+9. create IAM Policy
+  policy --- >
+ aws iam create-policy \
+    --policy-name AmazonEKSClusterAutoscalerPolicy \
+    --policy-document file://cluster-autoscaler-policy.json
+
+10. Create IAM Role and Attach to IAM policy
+  command --- >
+  ksctl create iamserviceaccount   --cluster=hcx-staging-1-27   --namespace=kube-system   --name=cluster-autoscaler   --attach-policy-arn=arn:aws:iam::131795456882:policy/AmazonEKSClusterAutoscalerPolicyStaging127  --override-existing-serviceaccounts --profile git-deploy --region ap-south-1 --approve
+
+11. create cluster autoscaler policy     ----
+   file ----> nano cluster-autoscaler-autodiscover.yaml
+  need to changes in yaml file according to environment.
+
+12. Deploy the Cluster Autoscaler
+    command --->  kubectl apply -f cluster-autoscaler-autodiscover.yaml
+
+13. check log are came or not ---
+ commands --->  kubectl get ns -A
+                kubectl logs -n kube-system cluster-autoscaler-76d66cddfb-559g7
+                
