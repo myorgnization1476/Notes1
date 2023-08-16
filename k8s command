@@ -1,3 +1,6 @@
 export EDITOR=nano
 kubectl edit cm aws-auth -n kube-system
 kubectl describe -n kube-system configmap/aws-auth
+kubectl get pods -A (namespace)
+kubectl get ns -A
+kubectl logs -n kube-system cluster-autoscaler-76d66cddfb-559g7                       --to check logs
